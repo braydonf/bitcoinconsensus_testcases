@@ -25,6 +25,7 @@ void printArray(unsigned char a[], int n) {
 
 int parse_file(FILE* fp, unsigned char scriptPubKey[], unsigned int* scriptPubKeyLen, 
         unsigned char txTo[], unsigned int* txToLen, unsigned int* nIn, unsigned int* flags) {
+
     int lineSize = 20000;
     char line[lineSize];
     fgets(line, sizeof(line), fp);
@@ -52,12 +53,17 @@ int main(int argc, char *argv[]) {
     FILE *fp;
     fp = fopen(argv[1], "r");
 
+    if (fp == NULL) {
+      printf("could not open file: %s\n", argv[1]);
+    }
+
     unsigned char scriptPubKey[20000];
     unsigned int scriptPubKeyLen;
     unsigned char txTo[20000];
     unsigned int txToLen;
     unsigned int nIn;
     unsigned int flags;
+
     parse_file(fp, scriptPubKey, &scriptPubKeyLen, txTo, &txToLen, &nIn, &flags);
     if (argc >= 3 && (atoi(argv[2]) == 1 || atoi(argv[2]) == 3)) {
         printArray(scriptPubKey, scriptPubKeyLen);

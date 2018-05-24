@@ -21,6 +21,39 @@ Fuzzing Instructions
 * Run ./include_new.sh with the output of afl-fuzz, which prunes and includes your work into 0.10-\*.
 * Open a pull request with the testcases folder.
 
+Detailed Build Instructions
+---
+
+Building AFL:
+```
+wget http://lcamtuf.coredump.cx/afl/releases/afl-latest.tgz
+tar -zxvf afl-latest.tgz
+cd afl-<version>
+make
+export AFLPATH=$PWD
+```
+
+Build Bitcoin Core with instrumentation:
+```
+./configure --disable-ccache --enable-tests CC=${AFLPATH}/afl-gcc CXX=${AFLPATH}/afl-g++ --prefix=/path/to/local/bitcoin/build
+export AFL_HARDEN=1
+make
+make install
+```
+
+Compile valid_script:
+```
+export AFLPATH=/path/to/local/afl/build
+export BITCOINCOREPATH=/path/to/local/bitcoin/build
+make
+```
+
+run bitcoinconsensus_testcases:
+```
+export LD_LIBRARY_PATH=/path/to/local/bitcoin/build
+/path/to/local/afl/build/afl-fuzz -i 0.10-positive -o output -n /path/to/local/bitcoinconsensus_testcases/valid_script @@
+```
+
 valid_script.c
 ---
 Expects a text file as input where the first line is the hex encoded scriptPubKey, the second line the hex encoded transaction, the third line an integer for the transaction index and the fourth line is an integer with the flags.
