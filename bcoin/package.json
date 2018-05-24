@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "bcoin": "github:bcoin-org/bcoin"
+  }
+}
